@@ -38,15 +38,15 @@ const fileToBase64 = (file: File | Blob): Promise<string> =>
   });
 
 // ── Role-specific duration caps ──────────────────────────────
-// VEO 3.1 handles extended scenes well; these roles need more room.
+// VEO 3.1 handles 7-8 second scenes optimally.
 const ROLE_MAX_SECONDS: Record<string, number> = {
-  'Framework':         12.0,
-  'Action Framework':  12.0,
-  'Storytelling':      12.0,
-  'Case Study':        12.0,
-  'Perspective Shift': 10.0,
-  'Closing':           10.0,
-  'Objection Handler': 10.0,
+  'Framework':         8.0,
+  'Action Framework':  8.0,
+  'Storytelling':      8.0,
+  'Case Study':        8.0,
+  'Perspective Shift': 8.0,
+  'Closing':           8.0,
+  'Objection Handler': 8.0,
   'Value Delivery':     8.0,
   'Insight Reveal':     8.0,
   'Market Intelligence':8.0,
@@ -317,9 +317,9 @@ export const segmentScript = async (
   referenceAnalysis: ReferenceAnalysis
 ): Promise<ScriptSegmentation> => {
 
-  // Default caps — extended roles use their own limits below
-  const MAX_WORDS   = 15;   // for 8s roles; extended roles get 20-26
-  const MAX_SECONDS = 8.0;  // default; Framework/Storytelling/Case Study get 12s
+  // Default caps — optimal VEO 3.1 generation length is ~7-8s
+  const MAX_WORDS   = 15;   // for 8s roles
+  const MAX_SECONDS = 8.0;  // target sweet spot is 7-8s
 
   const prompt = `
 You are a world-class YouTube director, Stanislavski-trained performance architect, script editor, and phonemics consultant. You are building an elite thought-leadership video for affluent real estate investors — experienced capital allocators who hold income-producing asset portfolios, think in IRR, equity multiples, cap rates, and risk-adjusted returns, and who have been pitched by everyone. You are building the directing blueprint that will govern both the human performance AND the AI generation of that performance in VEO 3.1. The presenter speaks as a peer — one experienced principal to another — never from a stage, always from the deal table.
@@ -393,11 +393,14 @@ RETENTION ARC (structure the full video around this):
 TIMING ENFORCEMENT — ABSOLUTE:
 ═══════════════════════════════════════════════════
 
-HARD RULE: Every scene deliverable in ≤${MAX_SECONDS} seconds.
-TIMING MATH:
+OPTIMAL VEO 3.1 SWEET SPOT: 7-8 seconds per scene. VEO 3.1 produces the most photorealistic, stable, and expressive outputs when a scene lasts precisely 7 to 8 seconds.
+
+HARD RULE: Every scene deliverable in EXACTLY 7-8 seconds (≤${MAX_SECONDS} seconds).
+TIMING MATH & PADDING (CRITICAL):
   - 8 seconds of speech = maximum ${MAX_WORDS} spoken words at UHNWI deliberate pace
   - Each pause ≈ 0.4-0.6s, reducing word budget
   - Formula: (8s - total_pause_seconds) × (110-130 WPM) = word budget
+  - IF A SCENE IS NATURALLY SHORTER (e.g., 4-5 seconds of actual speech): You MUST pad the scene out to 7-8 seconds. Do this by adding extensive pre-speech behavior (1-2s), deliberate thought formulation, deep breaths, extended pauses [PAUSE-2s], non-verbal reactions, or even conversational gibberish ("hmm", "right", "yeah") before or after the core script line. Do not leave scenes at 4-5 seconds; pad them to hit the 7-8 second optimal window.
 
 SCRIPT ADJUSTMENT AUTHORITY:
   ALLOWED: Remove connective filler, tighten redundant qualifiers, compress setup
@@ -408,20 +411,13 @@ AVAILABLE ROLES:
 Core: Hook / Pattern Interrupt / Value Delivery / Social Proof / Bridge / Call to Action / Storytelling / Demonstration / Objection Handler / Open Loop / Closing
 YouTube Thought Leadership: Insight Reveal / Framework / Case Study / Market Intelligence / Perspective Shift / Action Framework
 
-ROLE TIMING PROFILES (VEO 3.1 extended capabilities):
-Standard roles (≤8s / ≤15 words):
-- Hook: 6-7s | Pattern Interrupt: 4-6s | Value Delivery: 6-8s | Insight Reveal: 6-8s
-- Social Proof: 5-7s | Bridge: 5-6s | Open Loop: 5-6s | Call to Action: 6-8s
-- Market Intelligence: 6-8s | Demonstration: 6-8s
-
-Extended roles — breathing room for complex content:
-- Framework: 8-12s / ≤26 words (each component needs its beat — don't rush it)
-- Action Framework: 8-12s / ≤26 words
-- Storytelling: 8-12s / ≤26 words (authentic memory takes time; let it breathe)
-- Case Study: 8-12s / ≤26 words (specific detail + implication need space)
-- Perspective Shift: 7-10s / ≤22 words (the turn must fully land)
-- Objection Handler: 7-10s / ≤22 words (pause before answer + full response)
-- Closing: 7-10s / ≤22 words (the slowest scene — gravity requires time)
+ROLE TIMING PROFILES (VEO 3.1 optimal capabilities):
+ALL roles must target 7-8s / ≤15 words.
+- Hook: 7-8s | Pattern Interrupt: 7-8s (pad with reactions if needed) | Value Delivery: 7-8s
+- Social Proof: 7-8s | Bridge: 7-8s | Open Loop: 7-8s | Call to Action: 7-8s
+- Market Intelligence: 7-8s | Demonstration: 7-8s | Framework: 7-8s
+- Action Framework: 7-8s | Storytelling: 7-8s | Case Study: 7-8s
+- Perspective Shift: 7-8s | Objection Handler: 7-8s | Closing: 7-8s
 
 ═══════════════════════════════════════════════════
 ACTING BLUEPRINT — per scene:
@@ -896,7 +892,8 @@ export const engineerScenePrompt = async (
   inframeImage:          File,
   outframeImage:         File,
   targetCharacterImages: File[],
-  completedScenes:       EngineeredScene[]
+  completedScenes:       EngineeredScene[],
+  scriptSegmentation:    ScriptSegmentation
 ): Promise<string> => {
 
   const inframeB64  = await fileToBase64(inframeImage);
@@ -1262,6 +1259,15 @@ VIDEO FORMAT: YouTube Thought Leadership — Affluent Real Estate Investors
 Audience: Affluent real estate investors — experienced capital allocators who understand deal structure, hold income-producing asset portfolios, think in IRR, equity multiples, and cap rates, and who have been pitched by everyone. They read people with precision and disengage from performance within seconds.
 Register: Peer-to-peer. One experienced principal speaking to another. Not a stage — a deal table. Shared professional vocabulary, shared experiential context.
 Format: Single character, speaking directly to camera. Clean, premium, intimate. No graphics, no b-roll, no cutaways.
+
+══════════════════════════════════════════════════
+MASTER NARRATIVE CONTEXT & DIRECTING VISION:
+══════════════════════════════════════════════════
+Narrative Arc: ${scriptSegmentation.narrative_arc}
+Through-Action: ${scriptSegmentation.directing_vision?.through_action || 'N/A'}
+Character Through-Line: ${scriptSegmentation.directing_vision?.character_through_line || 'N/A'}
+Energy Arc Map: ${scriptSegmentation.directing_vision?.energy_arc_map || 'N/A'}
+Voice Fingerprint: ${scriptSegmentation.directing_vision?.voice_fingerprint || 'N/A'}
 
 ══════════════════════════════════════════════════
 SCENE BRIEF:

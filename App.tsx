@@ -198,8 +198,8 @@ export default function App() {
           )
         ]);
 
-        const inFileEnh  = new File([rIn.blob],  `inframe-${scene.scene_number}.jpg`,  { type: 'image/jpeg' });
-        const outFileEnh = new File([rOut.blob], `outframe-${scene.scene_number}.jpg`, { type: 'image/jpeg' });
+        const inFileEnh  = new File([rIn.blob],  `inframe-${scene.scene_number}${rIn.enhanced ? '-enhanced' : ''}.jpg`,  { type: 'image/jpeg' });
+        const outFileEnh = new File([rOut.blob], `outframe-${scene.scene_number}${rOut.enhanced ? '-enhanced' : ''}.jpg`, { type: 'image/jpeg' });
 
         setFrameEnhanced(rIn.enhanced || rOut.enhanced);
         setFrameStatus('ready');
@@ -224,7 +224,8 @@ export default function App() {
       const prompt = await engineerScenePrompt(
         scene, state.referenceAnalysis,
         state.inframeImage, state.outframeImage,
-        state.targetCharacterImages, state.completedScenes
+        state.targetCharacterImages, state.completedScenes,
+        state.scriptSegmentation
       );
       const engineered: EngineeredScene = {
         scene_number: scene.scene_number, scene_title: scene.title,
