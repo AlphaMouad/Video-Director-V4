@@ -1083,77 +1083,77 @@ EXPRESSION-INHERITANCE PROTOCOL: ${scene.continuity?.expression_inheritance || '
   const roleEmotionMap: Record<string, { emotion: string; containment: string; voiceColor: string }> = {
     'Hook': {
       emotion: `Relaxed, controlled excitement — the electric but deeply relaxed readiness of an Elite Pitch, offering inviting vibes and world-class storytelling`,
-      containment: `8/10 — visible only as absolute, relaxed presence and inviting confidence; never pushed or forced`,
+      containment: `5/10 — fluid, highly engaging, and naturally expressive; deeply welcoming and free from stiffness`,
       voiceColor: `World-class English USA Accent. A relaxed, crisp arrival. Already at full, relaxed conviction before the lips part.`,
     },
     'Pattern Interrupt': {
       emotion: `Relaxed, calibrated amusement — the inviting micro-pleasure of an elite performer shifting gears effortlessly`,
-      containment: `9/10 — a relaxed, barely visible micro-shift in expression; the effortless contrast is the technique`,
+      containment: `5/10 — warm, expressive, and conversational; micro-shifts are fluid and relaxed`,
       voiceColor: `World-class English USA Accent. A relaxed lateral shift in energy. The interrupt arrives with inviting, effortless rhythm.`,
     },
     'Value Delivery': {
       emotion: `Relaxed, generous warmth — the inviting pleasure of placing immense value before an affluent investor with relaxed confidence`,
-      containment: `7/10 — relaxed warmth colors every vowel; inviting vibes visible in the relaxed quality of silence`,
+      containment: `4/10 — highly visible, engaging warmth; the face and body are fluid and deeply welcoming`,
       voiceColor: `World-class English USA Accent. The voice warms and relaxes on setup, deepening effortlessly on the insight.`,
     },
     'Insight Reveal': {
       emotion: `Relaxed intellectual delight — the quiet, inviting pleasure of sharing a profound idea with relaxed confidence`,
-      containment: `8/10 — a relaxed micro-smile and brightening; highly convincing attributes delivered with ease`,
+      containment: `4/10 — bright, engaging, and expressive; a highly natural and realistic welcoming vibe`,
       voiceColor: `World-class English USA Accent. Fractional, relaxed deceleration. Complete, relaxed silence after the insight.`,
     },
     'Framework': {
       emotion: `Relaxed architectural pride — the inviting, quiet satisfaction of an Elite Pitch presenting proprietary value`,
-      containment: `9/10 — relaxed pride in the precision of each word; totally relaxed facial expressions`,
+      containment: `5/10 — warm, fluid conversational energy; facial expressions are relaxed but active and engaging`,
       voiceColor: `World-class English USA Accent. Measured, relaxed, and deliberate. Each component gets equal, relaxed vocal weight.`,
     },
     'Social Proof': {
       emotion: `Relaxed, comfortable certainty — the settled, inviting ease of someone who expects elite results`,
-      containment: `10/10 — completely relaxed understatement; convincing attributes rely entirely on relaxed delivery`,
+      containment: `5/10 — relaxed but highly engaging; body language is fluid, welcoming, and natural`,
       voiceColor: `World-class English USA Accent. Flatter, extremely relaxed affect. Specific numbers delivered with effortless, elite pacing.`,
     },
     'Bridge': {
       emotion: `Relaxed, warm momentum — the inviting, welcoming energy of an elite guide moving forward with relaxed confidence`,
-      containment: `7/10 — relaxed warmth is highly visible; inviting vibes are the dominant color`,
+      containment: `4/10 — highly expressive, warm, and fluid; an elite but deeply inviting and unstiff presence`,
       voiceColor: `World-class English USA Accent. Smooth, continuous, relaxed breath carrying the scene forward.`,
     },
     'Call to Action': {
       emotion: `Relaxed, genuine invitation — the warmest, most inviting vibe, completely free of pressure or tension`,
-      containment: `8/10 — incredibly relaxed and real; pure inviting warmth to convince affluent investors naturally`,
+      containment: `3/10 — deeply expressive, warm, and hyper-realistic; maximum welcoming vibes and fluidity`,
       voiceColor: `World-class English USA Accent. Slower, more intimate, extremely relaxed and warm vowels.`,
     },
     'Storytelling': {
       emotion: `Relaxed, present-tense aliveness — world-class storytelling delivered with relaxed facial expressions and inviting vibes`,
-      containment: `6/10 — authentic, relaxed recall; emotion lives in the relaxed tempo and vivid details`,
+      containment: `4/10 — highly animated, natural, and fluid storytelling; free from any robotic stiffness`,
       voiceColor: `World-class English USA Accent. Variable, relaxed, and organic. The voice breathes with elite storytelling rhythm.`,
     },
     'Demonstration': {
       emotion: `Relaxed, alert satisfaction — the inviting pleasure of an elite expert showing how a mechanism works with total ease`,
-      containment: `8/10 — relaxed clarity and precision; facial expressions stay completely relaxed and composed`,
+      containment: `5/10 — warm, engaging, and fluid; facial expressions are composed but highly realistic and alive`,
       voiceColor: `World-class English USA Accent. Crisp, decisive, yet entirely relaxed and effortless.`,
     },
     'Objection Handler': {
       emotion: `Relaxed, compassionate certainty — genuine, inviting respect combined with absolute, relaxed confidence`,
-      containment: `9/10 — relaxed compassion in the pace; the pause is a moment of relaxed, elite certainty`,
+      containment: `5/10 — fluid, expressive compassion; the face is warm, natural, and deeply engaging`,
       voiceColor: `World-class English USA Accent. The response is slightly slower, weighted with relaxed, elite confidence.`,
     },
     'Open Loop': {
       emotion: `Relaxed anticipatory tension — the inviting charge of an Elite Pitch deliberately withholding with a relaxed smile`,
-      containment: `7/10 — relaxed incompletion; the suspension is held with total, relaxed ease`,
+      containment: `5/10 — fluid and engaging suspension; the face is alive, relaxed, and welcoming`,
       voiceColor: `World-class English USA Accent. Steady, relaxed build. The final word suspended effortlessly.`,
     },
     'Closing': {
       emotion: `Relaxed, satisfied completion — the warm, inviting finality of a world-class Elite Pitch landing perfectly`,
-      containment: `8/10 — entirely relaxed facial expressions; the emotion lives in the relaxed deceleration and silence`,
+      containment: `4/10 — warm, expressive, and highly natural; entirely free of stiffness`,
       voiceColor: `World-class English USA Accent. The slowest, most deliberate, relaxed voice. Placed effortlessly.`,
     },
     'Case Study': {
       emotion: `Relaxed, evidence-based confidence — the inviting, calm authority of an elite witness with nothing to prove`,
-      containment: `8/10 — extremely relaxed facial expressions; conviction comes from the relaxed specificity`,
+      containment: `4/10 — engaging, fluid, and highly realistic; expressive confidence without rigidity`,
       voiceColor: `World-class English USA Accent. Relaxed, fractional slowing on specific details. World-class articulation.`,
     },
     'Market Intelligence': {
       emotion: `Relaxed, alert precision — the focused, inviting energy of an elite briefing delivered with total ease`,
-      containment: `9/10 — highly contained and relaxed; the intelligence is delivered with effortless, elite pacing`,
+      containment: `5/10 — fluid, warm, and highly engaging; free of robotic stillness`,
       voiceColor: `World-class English USA Accent. Clinical but entirely relaxed. Implications stated as effortless facts.`,
     },
     'Perspective Shift': {
@@ -1163,7 +1163,7 @@ EXPRESSION-INHERITANCE PROTOCOL: ${scene.continuity?.expression_inheritance || '
     },
     'Action Framework': {
       emotion: `Relaxed, generous precision — the inviting pleasure of handing over elite tools with relaxed confidence`,
-      containment: `7/10 — relaxed warmth and generosity; care is shown through elite, relaxed pacing`,
+      containment: `4/10 — highly engaging, fluid, and warm; natural and welcoming vibes`,
       voiceColor: `World-class English USA Accent. Clear, relaxed, and warm. The final element settles with effortless ease.`,
     },
   };
@@ -1344,13 +1344,10 @@ CATCHLIGHTS: Two per eye maximum — the primary key light (larger, positioned i
 
 FACIAL MUSCLE ANATOMY — the physiological signature of RELAXED, genuine confidence and inviting vibes:
 Performed confidence and actual confidence produce different faces at the muscular level. A UHNWI viewer reads this difference in 0.2 seconds because they have spent their career in rooms with genuinely powerful people. The map of genuine confidence at rest:
-· FRONTALIS (forehead): completely unlocked — zero horizontal lines, zero engagement; the skin is mobile but not contracted; confidence does not furrow or raise its brow
-· CORRUGATOR SUPERCILII (inner brow): fully at rest — no vertical lines between the brows; this is where effort, concern, and anxiety live; its complete absence signals certainty
-· ORBICULARIS OCULI SUPERIOR (upper eyelid): at natural aperture — eyes fully open without wideness; not narrowed (suspicion), not wide (alarm); the aperture of someone with nothing to prove
-· ZYGOMATICUS MAJOR (smile muscle): minimally engaged — not a smile, not a blank; the neutral-warm position of someone pleased to be present without performing pleasure
-· ORBICULARIS ORIS (lip ring): relaxed tension — lips maintain their form without pressing or micro-compressing at the commissures; the ease of a face that is not controlling itself
-· MENTALIS (chin): completely at rest — zero bunching, zero dimpling, zero chin tension; mentalis activation is the first and most visible anxiety signal; its complete absence reads as genuine security
-· MASSETER (jaw): neutral, not clenched — the jaw settled, not set; no visible masseter hypertrophy or definition; the jaw of someone comfortable rather than guarded
+· FRONTALIS & BROW: Naturally mobile and expressive. The brow moves fluidly with the thought — lifting on emphasis, softening on warmth. No frozen or locked facial expressions. The face is alive and highly engaging.
+· ORBICULARIS OCULI (eyes): Warm, bright, and welcoming. Eyes show genuine, relaxed pleasure and engagement with the viewer.
+· ZYGOMATICUS MAJOR (smile): Actively engaged in a warm, inviting, and genuine conversational manner. The face should feel highly welcoming and relaxed, not neutral or overly serious.
+· ORBICULARIS ORIS & JAW: Completely relaxed tension. The mouth moves organically with world-class speech, and the jaw drops naturally without any clenching. The expression radiates natural, hyper-realistic ease.
 These seven muscles simultaneously at rest produce the face of genuine, RELAXED authority and inviting vibes — not neutral, but rich: interested, present, incredibly relaxed, and completely at ease. The acting performance must be optimized to maximize storytelling and convincing attributes while remaining effortlessly relaxed. Render this as the character's baseline face.
 
 DUCHENNE WARMTH vs. PERFORMED WARMTH — a critical distinction:
@@ -1414,8 +1411,8 @@ The seven-muscle baseline mapped in the Character section (frontalis unlocked, c
 
 ${energyDir}
 
-THE LUXURY OF STILLNESS:
-${personaSummary}. High-status stillness punctuated exclusively by thought-motivated movement. When the body moves, a thought has physically arrived and the body responds to it. Gesture is discovered mid-thought, never scripted before it. Between gestures: complete, settled stillness — not rigidity, but the ease of someone whose presence fills the frame without effort. The physical signature of this scene: ${physicalSig}. This posture is the scene's visual center of gravity. Everything breathes from it and returns to it.
+NATURAL, RELAXED ENGAGEMENT:
+${personaSummary}. The actor must display warm, fluid, and highly natural conversational body language. Avoid any stiffness or robotic rigidity. Weight shifts naturally, shoulders are relaxed, and the body moves with engaging, welcoming vibes. Gesture is fluid, natural, and expressive, perfectly matched to the rhythm of the speech. The physical signature of this scene: ${physicalSig} — interpreted with relaxed, hyper-realistic, and inviting human movement.
 
 EYE CONTACT — THE LENS RELATIONSHIP:
 Eye contact established before the first word and maintained through every pause. Released only on the organic micro-break between thoughts — 0.2 seconds when the eyes shift fractionally inward as the next idea begins to form, then return completely to the lens. This eye-break is not weakness; it is the authentic behavior of someone genuinely thinking, and its naturalness is what makes the contact feel real rather than performed. The ratio of gaze-hold to gaze-break in this scene: approximately 85% to 15%.
