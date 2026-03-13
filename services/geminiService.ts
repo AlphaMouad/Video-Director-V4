@@ -38,15 +38,15 @@ const fileToBase64 = (file: File | Blob): Promise<string> =>
   });
 
 // ── Role-specific duration caps ──────────────────────────────
-// VEO 3.1 handles extended scenes well; these roles need more room.
+// VEO 3.1 handles 7-8 second scenes optimally.
 const ROLE_MAX_SECONDS: Record<string, number> = {
-  'Framework':         12.0,
-  'Action Framework':  12.0,
-  'Storytelling':      12.0,
-  'Case Study':        12.0,
-  'Perspective Shift': 10.0,
-  'Closing':           10.0,
-  'Objection Handler': 10.0,
+  'Framework':         8.0,
+  'Action Framework':  8.0,
+  'Storytelling':      8.0,
+  'Case Study':        8.0,
+  'Perspective Shift': 8.0,
+  'Closing':           8.0,
+  'Objection Handler': 8.0,
   'Value Delivery':     8.0,
   'Insight Reveal':     8.0,
   'Market Intelligence':8.0,
@@ -317,9 +317,9 @@ export const segmentScript = async (
   referenceAnalysis: ReferenceAnalysis
 ): Promise<ScriptSegmentation> => {
 
-  // Default caps — extended roles use their own limits below
-  const MAX_WORDS   = 15;   // for 8s roles; extended roles get 20-26
-  const MAX_SECONDS = 8.0;  // default; Framework/Storytelling/Case Study get 12s
+  // Default caps — optimal VEO 3.1 generation length is ~7-8s
+  const MAX_WORDS   = 15;   // for 8s roles
+  const MAX_SECONDS = 8.0;  // target sweet spot is 7-8s
 
   const prompt = `
 You are a world-class YouTube director, Stanislavski-trained performance architect, script editor, and phonemics consultant. You are building an elite thought-leadership video for affluent real estate investors — experienced capital allocators who hold income-producing asset portfolios, think in IRR, equity multiples, cap rates, and risk-adjusted returns, and who have been pitched by everyone. You are building the directing blueprint that will govern both the human performance AND the AI generation of that performance in VEO 3.1. The presenter speaks as a peer — one experienced principal to another — never from a stage, always from the deal table.
@@ -349,7 +349,7 @@ NEVER: "to present", "to explain", "to describe". ALWAYS: a transformation.
 e.g. "To make this viewer understand that the risk they fear is imaginary and the opportunity they're missing is real — and hand them the conviction to act."
 
 PRESENTATION PERSONA: The UHNWI-appropriate archetype inhabiting this video.
-e.g. "The world-class private advisor who speaks to principals as peers — never performing, always transmitting, treating the viewer's time as the most valuable thing in the room."
+e.g. "The world-class private advisor who speaks to affluent Real Estate Investor principals as peers — projecting a relaxed confident acting performance, inviting vibes, and delivering an Elite Pitch optimized to maximize storytelling and convincing attributes."
 
 SILENCE RULE (ABSOLUTE): Zero music. Zero audio effects. Zero ambient sound. Zero subtitles. Voice only, in complete acoustic silence. Every scene, no exceptions.
 
@@ -393,11 +393,14 @@ RETENTION ARC (structure the full video around this):
 TIMING ENFORCEMENT — ABSOLUTE:
 ═══════════════════════════════════════════════════
 
-HARD RULE: Every scene deliverable in ≤${MAX_SECONDS} seconds.
-TIMING MATH:
+OPTIMAL VEO 3.1 SWEET SPOT: 7-8 seconds per scene. VEO 3.1 produces the most photorealistic, stable, and expressive outputs when a scene lasts precisely 7 to 8 seconds.
+
+HARD RULE: Every scene deliverable in EXACTLY 7-8 seconds (≤${MAX_SECONDS} seconds).
+TIMING MATH & PADDING (CRITICAL):
   - 8 seconds of speech = maximum ${MAX_WORDS} spoken words at UHNWI deliberate pace
   - Each pause ≈ 0.4-0.6s, reducing word budget
   - Formula: (8s - total_pause_seconds) × (110-130 WPM) = word budget
+  - IF A SCENE IS NATURALLY SHORTER (e.g., 4-5 seconds of actual speech): You MUST pad the scene out to 7-8 seconds. Do this by adding extensive pre-speech behavior (1-2s), deliberate thought formulation, deep breaths, extended pauses [PAUSE-2s], non-verbal reactions, or even conversational gibberish ("hmm", "right", "yeah") before or after the core script line. Do not leave scenes at 4-5 seconds; pad them to hit the 7-8 second optimal window.
 
 SCRIPT ADJUSTMENT AUTHORITY:
   ALLOWED: Remove connective filler, tighten redundant qualifiers, compress setup
@@ -408,20 +411,13 @@ AVAILABLE ROLES:
 Core: Hook / Pattern Interrupt / Value Delivery / Social Proof / Bridge / Call to Action / Storytelling / Demonstration / Objection Handler / Open Loop / Closing
 YouTube Thought Leadership: Insight Reveal / Framework / Case Study / Market Intelligence / Perspective Shift / Action Framework
 
-ROLE TIMING PROFILES (VEO 3.1 extended capabilities):
-Standard roles (≤8s / ≤15 words):
-- Hook: 6-7s | Pattern Interrupt: 4-6s | Value Delivery: 6-8s | Insight Reveal: 6-8s
-- Social Proof: 5-7s | Bridge: 5-6s | Open Loop: 5-6s | Call to Action: 6-8s
-- Market Intelligence: 6-8s | Demonstration: 6-8s
-
-Extended roles — breathing room for complex content:
-- Framework: 8-12s / ≤26 words (each component needs its beat — don't rush it)
-- Action Framework: 8-12s / ≤26 words
-- Storytelling: 8-12s / ≤26 words (authentic memory takes time; let it breathe)
-- Case Study: 8-12s / ≤26 words (specific detail + implication need space)
-- Perspective Shift: 7-10s / ≤22 words (the turn must fully land)
-- Objection Handler: 7-10s / ≤22 words (pause before answer + full response)
-- Closing: 7-10s / ≤22 words (the slowest scene — gravity requires time)
+ROLE TIMING PROFILES (VEO 3.1 optimal capabilities):
+ALL roles must target 7-8s / ≤15 words.
+- Hook: 7-8s | Pattern Interrupt: 7-8s (pad with reactions if needed) | Value Delivery: 7-8s
+- Social Proof: 7-8s | Bridge: 7-8s | Open Loop: 7-8s | Call to Action: 7-8s
+- Market Intelligence: 7-8s | Demonstration: 7-8s | Framework: 7-8s
+- Action Framework: 7-8s | Storytelling: 7-8s | Case Study: 7-8s
+- Perspective Shift: 7-8s | Objection Handler: 7-8s | Closing: 7-8s
 
 ═══════════════════════════════════════════════════
 ACTING BLUEPRINT — per scene:
@@ -896,7 +892,8 @@ export const engineerScenePrompt = async (
   inframeImage:          File,
   outframeImage:         File,
   targetCharacterImages: File[],
-  completedScenes:       EngineeredScene[]
+  completedScenes:       EngineeredScene[],
+  scriptSegmentation:    ScriptSegmentation
 ): Promise<string> => {
 
   const inframeB64  = await fileToBase64(inframeImage);
@@ -971,125 +968,108 @@ EXPRESSION-INHERITANCE PROTOCOL: ${scene.continuity?.expression_inheritance || '
 
   // ── Role Performance Map ───────────────────────────────────
   const rolePerformanceMap: Record<string, { energy: string; directorNote: string; pacing: string; momentBefore: string }> = {
-
     'Hook': {
-      energy: `The frame is owned before a single word is spoken. Energy: 8/10 — coiled, forward, completely still. Not loud. Not urgent. Precise. This is the energy of someone who has done the calculation and knows exactly what the next five minutes are worth to this viewer. The eyes arrive at the lens first — a full beat of contact established in silence — then the lips part. In the half-second before speech: the composure of someone who has never raised their voice to command a room, because they have never needed to.`,
-      directorNote: `You are not auditioning. This viewer clicked because they already believe you might have something worth their time. Your job in the first five seconds is to confirm that belief with one sentence that creates a curiosity only staying can resolve. Speak to them as an equal. No warmup. No "hey guys." You open mid-thought — as if this conversation has been happening and they just arrived at the best part.`,
-      pacing: `Immediate — zero throat-clearing energy, zero ramp-up. The opening line at full conviction from the first syllable. The hook statement: one deliberate beat per word, each placed with precision. The curiosity-creating phrase: fractionally faster — pulling them forward. No word wasted. No syllable approximate.`,
-      momentBefore: `The presenter has been still for three full seconds before the first word. The thought has already happened privately. In the 0.5 seconds before speech: the jaw is relaxed but ready — lips within 3mm of each other, not pressing, not performing. The eyes arrive at the lens with the complete intentionality of someone who has already decided. A quiet chest expansion — the breath that will carry the first sentence — then the lips part with almost no effort and the opening word arrives as if it was always going to.`,
+      energy: `The frame is owned before a single word is spoken with relaxed confidence and inviting vibes. Energy: 8/10 — coiled, forward, yet entirely at ease. This is the energy of someone who has done the calculation and knows exactly what the next five minutes are worth to this affluent Real Estate Investor.`,
+      directorNote: `You are not auditioning. You are delivering an Elite Pitch. Your job in the first five seconds is to confirm their belief with relaxed, convincing storytelling. Speak to them as an equal with inviting vibes. No warmup. You open mid-thought — world-class speech delivery from the first frame.`,
+      pacing: `Elite pacing — immediate but unhurried. The opening line at full relaxed conviction. The hook statement: one deliberate beat per word, each placed with precision. No word wasted.`,
+      momentBefore: `The presenter has been still for three full seconds with relaxed facial expressions. The jaw is relaxed, lips parted naturally. The eyes arrive at the lens with inviting, warm confidence. A quiet chest expansion, then the first word arrives as if it was always going to.`,
     },
-
     'Pattern Interrupt': {
-      energy: `A gear-shift. Not louder — different. The energy moves laterally: a micro-adjustment in head angle, a fractional shift in expression quality, something in the orbital muscles that signals "this is not what you were expecting." The contrast between the previous scene's register and this scene's arrival IS the entire scene. The authenticity of the shift is everything. If it looks planned, it fails.`,
-      directorNote: `The interrupt is not a trick. It is a genuine course correction — as if a new thought just arrived that was more interesting than the one being followed. You felt it in the moment. The head tilts. The energy quality changes. Then you speak. The authentic quality of discovery is the whole technique.`,
-      pacing: `A sudden lateral movement in rhythm — whatever was expected, this is the opposite. Slower than expected, or sharper, or quieter, or arriving on a beat no one was counting. After the interrupt: silence. A full pause. Let the shift land completely before the next word.`,
-      momentBefore: `The tail-end of the previous scene's emotional register is still in the face — then something arrives. A micro-recalibration that happens before the body knows why: the brow shifts fractionally, the head adjusts, the energy quality changes in the muscles around the eyes before a word is spoken. The mouth holds in rest position for 0.3 seconds after this internal shift. Lips in natural parted rest, jaw easy. Then the interrupt arrives.`,
+      energy: `A relaxed, confident gear-shift. Not louder — different. The energy moves laterally with inviting vibes. The authenticity and ease of the shift is everything.`,
+      directorNote: `The interrupt is a genuine, relaxed course correction. You felt it in the moment. The head tilts with a relaxed facial expression. The energy quality changes smoothly. World-class speech delivery.`,
+      pacing: `Elite pacing — a sudden lateral movement in rhythm. Slower, sharper, or quieter, but always relaxed. After the interrupt: silence. Let the shift land completely.`,
+      momentBefore: `The tail-end of the previous scene's relaxed emotion lingers. A micro-recalibration with relaxed facial muscles. Lips in natural parted rest, jaw easy. Then the interrupt arrives effortlessly.`,
     },
-
     'Value Delivery': {
-      energy: `The energy of someone placing something genuinely valuable in front of a person who deserves to have it. 6-7/10 — warm, deliberate, unhurried. Not teaching. Sharing. The body settles slightly into the value being given — a physical sense of weight and care. This is the most generous scene in the video.`,
-      directorNote: `You have something this viewer needs — not wants, needs. And you are giving it freely. The quality of generosity in a world-class mentor is indistinguishable from genuine pleasure. Deliver this scene from that pleasure. The viewer should feel they received something before they've consciously processed what it was.`,
-      pacing: `Slow build. Each element receives its own breath, its own moment. The key insight: slower than everything before it — as if the value of the idea changes the physical weight of each word. After the insight: pause. The silence earns the insight.`,
-      momentBefore: `The face carries the warmth of someone about to give something they genuinely believe in. A slight softening of the eyes relative to the Hook's precision. The jaw completely relaxed, lips in their natural 3-4mm parted state. A breath that arrives with the quality of quiet generosity. The first word emerges warm and immediate — no ramp-up needed.`,
+      energy: `The relaxed, confident energy of someone placing immense value in front of an affluent Real Estate Investor. 6-7/10 — warm, deliberate, inviting vibes. The body settles into the value.`,
+      directorNote: `You are giving value freely with an Elite Pitch mentality. The quality of generosity here is indistinguishable from relaxed pleasure. The viewer should feel invited and convinced.`,
+      pacing: `Elite pacing — slow build. Each element receives its own breath. The key insight: slower, with world-class speech delivery giving weight to each word. Silence earns the insight.`,
+      momentBefore: `The face carries the relaxed warmth of someone giving something they genuinely believe in. The jaw completely relaxed. A breath that arrives with quiet generosity.`,
     },
-
     'Insight Reveal': {
-      energy: `The electric charge of shared discovery. Energy: 7/10 — alert, warm, leaning fractionally forward. This is the moment the whole video has been building toward. The face carries the contained pleasure of someone about to give the viewer an idea they will take with them for years. Not excitement — revelation. The slowdown into the reveal is the performance.`,
-      directorNote: `The insight is a gift. It arrives quietly. The greatest insights don't announce themselves — they land, and the room goes slightly still. Deliver this as a quiet certainty, not a crescendo. The slower you go approaching it, the more inevitable it feels. Let the viewer arrive at it a half-second before you say it. Then say it.`,
-      pacing: `Fractional deceleration approaching the insight — the voice slows 15-20% as if making room for what is about to exist. The insight itself: maximum deliberateness, one word per beat. After it: silence. The most important silence in the video. The voice does not fill it.`,
-      momentBefore: `The face already knows the insight is coming. A micro-brightening in the eyes — genuine intellectual pleasure, barely visible at the surface but unmistakable to the viewer's nervous system. The head is very slightly forward. Lips in their natural rest position — 3-4mm parted. A breath that arrives slightly more full than usual — the body making room for what the voice is about to carry.`,
+      energy: `The electric, yet relaxed charge of shared discovery. 7/10 — alert, warm, inviting vibes. The face carries the relaxed pleasure of an Elite Pitch revelation.`,
+      directorNote: `The insight lands quietly. Deliver this as a relaxed certainty, not a crescendo. The slower you go, the more inevitable it feels. World-class storytelling delivery.`,
+      pacing: `Elite pacing — fractional deceleration. The insight itself: maximum deliberateness, one word per beat. After it: relaxed silence.`,
+      momentBefore: `The face already knows the insight is coming. A relaxed micro-brightening in the eyes. Lips in natural rest. A breath that makes room for world-class delivery.`,
     },
-
     'Framework': {
-      energy: `Architectural precision. Energy: 6/10 — composed, deliberate, quietly proud. The energy of someone presenting work built carefully over years and now given freely. Each component of the framework receives equal respect. The structure of the delivery mirrors the structure of the framework: each element gets its own space, its own moment, its own arrival.`,
-      directorNote: `The framework exists independently of you. You are the architect showing someone a building that can stand without your presence. The structure earns the trust. Your job is to make each component land with equal weight and clarity. Nothing rushes. Everything gets its moment.`,
-      pacing: `Measured and deliberate. Each component receives equal vocal weight — no acceleration, no favorites. The voice constructs alongside the hands. Between elements: complete micro-pauses. The rhythm is architectural: component → pause → component → pause.`,
-      momentBefore: `The face carries the quiet certainty of someone about to share something that required years to perfect and that they believe in completely. Composed. Slightly forward in the frame — not leaning, simply present. The hands may already be beginning their organizational position. Lips in a compact, purposeful rest — slightly less open than warmth scenes. A clean, full breath. The first word arrives with the precision of something carefully placed.`,
+      energy: `Relaxed architectural precision. 6/10 — composed, deliberate, quietly proud. The energy of an Elite Pitch presenting a proprietary system to an affluent investor.`,
+      directorNote: `The framework exists independently. You are relaxed, showing someone a building that stands on its own. Nothing rushes. Relaxed, inviting vibes throughout.`,
+      pacing: `Elite pacing — measured and deliberate. Each component receives equal vocal weight with world-class speech delivery. Complete micro-pauses between elements.`,
+      momentBefore: `The face carries relaxed, quiet certainty. Slightly forward, simply present. Lips in a compact, relaxed rest. A clean, full breath.`,
     },
-
     'Social Proof': {
-      energy: `The settled ease of someone stating facts that happen to be extraordinary. Energy: 5/10 — completely composed, almost deliberately flat in affect. Understatement is the entire technique. The less impressed the speaker looks with the proof, the more impressive the proof becomes. The voice of a colleague reporting: "Oh, and by the way."`,
-      directorNote: `You expected these results. They don't surprise you. You see no reason to perform them. The facts are doing all the work. Your job is to stay completely out of their way — report them with the tone of someone reading a quarterly summary. Extraordinary understatement is the highest form of social proof.`,
-      pacing: `Slightly flatter than surrounding scenes. Specific numbers or names: a fractional slowing — not dramatic, just present. Then back to neutral. No lingering on the proof. Place it and move. Understatement is in the brevity.`,
-      momentBefore: `The face at its most neutral — not deliberately, just naturally. The settled composure of someone about to read a fact off a sheet. Eyes calm and direct, at baseline. No preparation energy. The mouth in complete rest — lips touching or within 1mm. A quiet, normal breath. The first word arrives completely unstressed.`,
+      energy: `The relaxed, settled ease of stating extraordinary facts. 5/10 — completely composed, inviting but deliberately understated. Understatement is the ultimate convincing attribute.`,
+      directorNote: `You expected these results. You see no reason to perform them. Stay completely relaxed. Extraordinary understatement delivered with world-class ease is the highest form of social proof.`,
+      pacing: `Elite pacing — slightly flatter than surrounding scenes. Specific numbers get fractional slowing. Understatement is in the brevity and relaxed delivery.`,
+      momentBefore: `The face at its most relaxed and neutral. The settled composure of an elite advisor. Eyes calm and direct. The first word arrives completely unstressed.`,
     },
-
     'Bridge': {
-      energy: `The warmth of a guide who has walked this path many times and is genuinely pleased to be leading someone through it. Energy: 6-7/10 — fluid, smooth, forward-moving. Not a transition — a companionship. The warmth here is the warmth of a peer who genuinely wants this person to follow them to the next idea.`,
-      directorNote: `The bridge is not filler. It is the moment the viewer feels accompanied rather than presented to. The voice can be at its most approachable here. The body is slightly more open. This is the "walking together" energy.`,
-      pacing: `Smooth and continuous — no hard attacks, no dramatic pauses. The breath carries through the scene with a sense of forward motion. The scene ends with slightly more energy than it began — momentum deposited into the next scene.`,
-      momentBefore: `The face carries a kind of forward-leaning warmth — the expression of someone about to take the viewer somewhere good. A slight brightening without being a smile. Eyes engaged but soft. Lips in their natural parted position. A breath of quiet readiness. The first word arrives warm and immediate.`,
+      energy: `The inviting, relaxed momentum of a guide who has walked this path many times. 6-7/10 — fluid, smooth, warm. A companionship with the affluent investor.`,
+      directorNote: `The bridge is an inviting transition. The voice is at its most relaxed and approachable here. This is the "walking together" energy of an Elite Pitch.`,
+      pacing: `Elite pacing — smooth and continuous. The breath carries through the scene with a sense of relaxed forward motion. World-class speech flow.`,
+      momentBefore: `The face carries an inviting, forward-leaning warmth. Relaxed facial expressions. A breath of quiet, relaxed readiness.`,
     },
-
     'Call to Action': {
-      energy: `Genuine invitation. Energy: 6/10 — the warmest moment in the video. Completely free of urgency, pressure, or commercial energy. The energy of someone who would genuinely value continued connection, extended from authentic desire rather than agenda. The moment any trace of selling enters the frame, the scene breaks.`,
-      directorNote: `You are not closing. You are not converting. You are genuinely inviting someone whose time and intelligence you respect to continue a conversation you have found valuable. The only strategy here is total authenticity. Speak from the part of you that actually means it — because if you don't mean it, a UHNWI investor knows in 0.3 seconds.`,
-      pacing: `The slowest conversational pace in the video — slower than the Closing in register. Each word placed with intention and warmth. The CTA phrase itself: even slower. The register drops slightly — more intimate than any previous scene. The period falls with finality but without weight.`,
-      momentBefore: `The face shifts from whatever the previous scene held into something softer and more open — a genuine warmth arriving. The eyes make a quality of contact that feels less like a presenter and more like a person. The jaw relaxes completely. Lips part into their most natural rest. A breath that arrives slightly fuller than usual — the body preparing for warmth rather than precision. The first word arrives quietly, without announcement.`,
+      energy: `Relaxed, genuine invitation. 6/10 — the warmest, most inviting moment. Completely free of pressure. The relaxed confidence of someone who genuinely values the connection.`,
+      directorNote: `You are not pushing; you are extending an inviting vibe to an affluent investor. Total relaxed authenticity. Speak from genuine, relaxed confidence.`,
+      pacing: `Elite pacing — the slowest conversational pace. Each word placed with intention and relaxed warmth. The register drops slightly for intimate, world-class delivery.`,
+      momentBefore: `The face shifts into soft, inviting warmth. Relaxed jaw, natural rest. A breath preparing for warmth rather than precision.`,
     },
-
     'Storytelling': {
-      energy: `Present-tense aliveness — the story is happening again as it is told. Energy: 6/10 — variable, organic, the most human energy in the video. The body and voice remember the story together. Specific details (the place, the person, what they said) carry the most aliveness. This is not narration. This is re-living.`,
-      directorNote: `You are not reciting. You are re-experiencing. The specific details — the name, the place, what they said — are not remembered, they are happening again in real time as you tell them. The face responds to the memory, not to a script. The most authentic storytelling looks exactly like recall: slightly inward as the image forms, then sharpening as it arrives, then full presence as the scene lands.`,
-      pacing: `The most variable pace in the video. Fast through transitions between beats. Slow through key images — the specific moment. The voice breathes at emotional peaks. Let the listener breathe with it. The variable rhythm IS the technique.`,
-      momentBefore: `The face carries a quality of accessing — reaching back slightly to find the memory. A micro-softening of focus in the eyes, not a glaze — alive, but inward for 0.3 seconds. The image forms internally. Then: the memory arrives, the eyes come forward to the lens with full presence, and the story begins from that aliveness.`,
+      energy: `Relaxed, present-tense aliveness optimized to maximize storytelling. 6/10 — organic, inviting vibes. The body and voice remember the story with relaxed ease.`,
+      directorNote: `You are re-experiencing with relaxed confidence. The face responds to the memory naturally. High-end storytelling attributes shine through relaxed, genuine presence.`,
+      pacing: `Elite pacing — variable and organic. Fast through transitions, slow and relaxed through key images. The voice breathes. World-class storytelling delivery.`,
+      momentBefore: `The face carries a relaxed quality of accessing memory. A micro-softening of focus. The memory arrives effortlessly.`,
     },
-
     'Demonstration': {
-      energy: `Alert satisfaction. The focused pleasure of someone showing a mechanism work exactly as designed, for an audience intelligent enough to appreciate it. Energy: 7/10 — crisp, direct, precise. Every element executed with the care of someone who respects the viewer's intelligence.`,
-      directorNote: `You love this. The elegance of the mechanism — how it works — is genuinely satisfying to you. Not because you designed it, but because you understand it completely and are sharing that understanding with someone capable of appreciating it. The energy of a craftsperson showing their work to another craftsperson.`,
-      pacing: `Crisp and decisive. No hedging sounds. Every sentence a complete assertion. Slightly faster than surrounding scenes — the demonstration has momentum, a sense of parts clicking into place.`,
-      momentBefore: `The face carries the quiet alertness of someone about to demonstrate something they believe in. Eyes sharp, slightly forward in attention. The body a fraction more engaged — a slight forward lean already present before speech. The hands positioned or beginning to position. Lips in a compact rest — slightly less open than warmth scenes. A breath of precise readiness. The first word arrives with the snap of something beginning.`,
+      energy: `Relaxed, alert satisfaction. 7/10 — crisp, direct, yet entirely at ease. Showing a mechanism to an affluent investor with relaxed confidence.`,
+      directorNote: `You love this, but remain relaxed. The elegance is genuinely satisfying. The energy of an elite craftsperson showing their work with inviting vibes.`,
+      pacing: `Elite pacing — crisp but unhurried. Every sentence a relaxed assertion. World-class articulation.`,
+      momentBefore: `The face carries relaxed, quiet alertness. The body settled but engaged. A breath of relaxed precision.`,
     },
-
     'Objection Handler': {
-      energy: `Compassionate certainty. 7/10 — genuine respect for the concern combined with the absolute quiet confidence that the answer is known. Two movements: receive the objection (in the setup) and answer it (in the response). The pause between them is the scene's most important moment. Not hesitation — the pause of someone who has thought about this longer than the viewer has.`,
-      directorNote: `The objection is legitimate. You have thought about it too — deeply. The pause before your response is not hesitation; it is the pause of someone who has complete respect for the question and complete confidence in the answer. The response arrives slower than expected because it was fully formed long before this moment.`,
-      pacing: `Setup (acknowledging the objection): conversational, slightly warm. Then: a pause — 0.4-0.6s — the most important moment in the scene. Then: the response arrives slightly slower and lower in register than the setup. The answer's final word: slight settling of the voice, as if the case is complete.`,
-      momentBefore: `The face carries the warmth of someone about to acknowledge something genuinely worth acknowledging. Eyes engaged, slightly softened — the posture of a listener. The jaw relaxed. The mouth in its natural rest — slightly parted, completely easy. A breath with the quality of patience. The first word arrives from this settled openness.`,
+      energy: `Relaxed, compassionate certainty. 7/10 — genuine respect combined with absolute, relaxed confidence. The pause is relaxed, not tense.`,
+      directorNote: `The objection is legitimate. You handle it with the relaxed confidence of an Elite Pitch. The pause before response is the relaxed silence of someone who knows the answer.`,
+      pacing: `Elite pacing — conversational setup, then a relaxed pause. The response arrives slightly slower, with world-class speech delivery and relaxed weight.`,
+      momentBefore: `The face carries relaxed warmth. Eyes engaged, jaw relaxed. A breath with the quality of relaxed patience.`,
     },
-
     'Open Loop': {
-      energy: `Anticipatory tension. Energy: 7/10 — the electric charge of deliberate incompletion. Both speaker and viewer know something important is coming and has not yet arrived. The scene builds steadily toward an incompletion that is more powerful than any resolution could be. The end of the scene: charged, unresolved, pulling the viewer into the next moment.`,
-      directorNote: `The incompletion is not a trick. It is the genuine recognition that the next idea deserves its own space — and that withholding it briefly makes it more valuable when it arrives. The tension of an open loop felt by a viewer is the tension of wanting. You are creating wanting.`,
-      pacing: `Builds steadily — gradual acceleration through the scene toward the unresolved close. The final word: no falling close, the voice stays slightly forward in register, suspended. The sentence does not resolve acoustically. Let the suspension sit.`,
-      momentBefore: `The face carries the quiet alertness of someone who knows something interesting is coming. A micro-brightening — not excitement, but anticipation. Eyes slightly more forward. Lips in a compact, purposeful rest. A breath that arrives with a sense of gathering. The scene begins with forward energy from the first syllable.`,
+      energy: `Relaxed anticipatory tension. 7/10 — the inviting charge of deliberate incompletion. Building toward a relaxed suspension.`,
+      directorNote: `The incompletion creates an inviting curiosity. You are creating wanting through relaxed, confident delivery of an Elite Pitch open loop.`,
+      pacing: `Elite pacing — steady, relaxed build. The final word suspended with world-class vocal control.`,
+      momentBefore: `The face carries a relaxed, quiet alertness. Lips in purposeful rest. A breath gathering relaxed energy.`,
     },
-
     'Closing': {
-      energy: `Satisfied completion. Energy: 5/10 — warm and settled. The energy of a conversation that went exactly as it should. Both parties gave and received. The face carries something that is not exactly happiness and not exactly seriousness but the specific quality of earned completion. This is the scene the entire video has been building toward — not as a peak, but as a landing.`,
-      directorNote: `This is not an outro. It is the final word of a great conversation. The viewer has received something real. You have given something real. The closing is the moment of mutual acknowledgment that something genuine happened here. Nothing is pitched. Nothing is sold. The only objective: the last impression is "That was worth my time."`,
-      pacing: `The slowest, most deliberate voice in the video. Each word placed with intention and finality. The final word: maximum duration — the vowel held slightly longer than natural, allowing the full meaning to settle. After it: silence. A long silence. The voice does not rush to end.`,
-      momentBefore: `The face carries the quality of someone who has arrived somewhere. A settled warmth — not performed satisfaction, but the genuine ease of someone who has given their best. Eyes engaged with the warmth of a final glance. Jaw completely relaxed. Lips in their most natural rest. A breath that arrives with the quality of completion. The first word of the close begins from perfect stillness.`,
+      energy: `Relaxed, satisfied completion. 5/10 — warm, settled, inviting vibes. The relaxed energy of a world-class conversation ending perfectly.`,
+      directorNote: `The final word of an Elite Pitch. Nothing pushed. The only objective is leaving them with relaxed, convincing attributes of value.`,
+      pacing: `Elite pacing — the slowest, most deliberate, relaxed voice. Maximum duration on the final word. Relaxed, confident silence follows.`,
+      momentBefore: `The face carries settled, relaxed warmth. Jaw completely relaxed. The first word begins from perfect relaxed stillness.`,
     },
-
     'Case Study': {
-      energy: `Evidence-based confidence. The calm authority of a witness — not a salesperson. Energy: 7/10 — present, specific, unhurried. Each specific detail (name, number, outcome) is not decoration; it is the entire point. Each lands with the weight of something verifiable. The presenter is not excited by the proof; they expected it.`,
-      directorNote: `You were there. You saw this happen. The specific detail is how you prove it — not to impress, but because the specific detail is the truth and the truth is always specific. The energy of a careful witness: "Here is what happened. Here is precisely what it was."`,
-      pacing: `Slightly more deliberate than surrounding scenes — specificity requires it. Key details (name, number, outcome): fractional slowing, consonants sharpen slightly, vowel holds at full width. The implication after the detail: slightly faster, as if the conclusion is inevitable.`,
-      momentBefore: `The face carries the settled certainty of someone about to describe something they witnessed personally. Composed, present, slightly forward — the energy of a careful witness rather than a performer. Eyes at a quality of direct, factual contact. The jaw relaxed. A natural breath. The first word arrives with the quiet authority of a statement that needs no amplification.`,
+      energy: `Relaxed, evidence-based confidence. 7/10 — present, specific, unhurried. The relaxed authority of an elite witness presenting to an affluent investor.`,
+      directorNote: `The specific detail is the truth, delivered with relaxed confidence. The energy of a careful, relaxed expert.`,
+      pacing: `Elite pacing — deliberate, relaxed delivery. Key details get fractional slowing. World-class speech precision.`,
+      momentBefore: `The face carries relaxed, settled certainty. Composed, present. A natural, relaxed breath.`,
     },
-
     'Market Intelligence': {
-      energy: `Alert precision. Energy: 7-8/10 — the focused clarity of a private briefing. Information this audience cannot get elsewhere — delivery must honor that. Crisp. Specific. Delivered with the quality of a briefing, not a broadcast. The body at its most contained: still, forward, completely present.`,
-      directorNote: `You have access this viewer does not. The intelligence itself is the entire scene — your job is to deliver it with enough precision and enough composure that its weight is felt without amplification. A briefing voice: not cold, but clinical. Not loud, but completely certain. The best intelligence briefers make extraordinary information feel routine — because to them, it is.`,
-      pacing: `Clinical and specific — the voice of a private briefing. Every data point receives its own space. Implications stated as facts, not conclusions. No hedging sounds. No "sort of" or "kind of." The precision of language mirrors the precision of the intelligence.`,
-      momentBefore: `The face carries the alert composure of someone about to deliver something genuinely important. Eyes sharp and direct — the quality of focused intelligence. Body at maximum stillness. The jaw slightly set — the physical signature of controlled authority. Lips in a firm but natural rest. A breath that arrives with the precision of someone beginning a briefing.`,
+      energy: `Relaxed, alert precision. 7-8/10 — the focused, inviting clarity of an Elite Pitch briefing. Crisp but entirely relaxed.`,
+      directorNote: `You have exclusive access, delivered with relaxed, world-class composure. The best briefers are completely relaxed while delivering extraordinary intelligence.`,
+      pacing: `Elite pacing — clinical, specific, but relaxed. Every data point gets relaxed space. World-class speech delivery.`,
+      momentBefore: `The face carries relaxed, alert composure. Body at maximum relaxed stillness. A breath of relaxed precision.`,
     },
-
     'Perspective Shift': {
-      energy: `Warm conviction. Energy: 7/10 — the genuine pleasure of someone who sees the world differently from the consensus and is generous enough to share the path that led there. Two movements: the conventional view (handled with respect but brevity) and the new perspective (delivered with full warmth and commitment).`,
-      directorNote: `You are not challenging. You are offering. The distinction is everything. A perspective shift in the hands of a great presenter feels like a gift — "I spent years arriving at this view, and I'm handing it to you now." The conventional view is not wrong; it's incomplete. Your job is to complete it.`,
-      pacing: `The conventional view: slightly flatter, slightly faster — it doesn't deserve much weight. The pivot: deliberate deceleration. The new perspective: fully warm, fully committed, the most generous pace in the scene. Let the new view land completely before the scene ends.`,
-      momentBefore: `The face carries the warm certainty of someone about to offer something they believe in completely. A slight forward energy — the lean of genuine conviction, not performance. Eyes at their most engaged. The mouth in a slightly open, ready rest — the physical expression of warmth. A full, warm breath. The first word arrives with the gentleness of an offering.`,
+      energy: `Relaxed, warm conviction. 7/10 — the inviting pleasure of offering a new view to an affluent investor with relaxed confidence.`,
+      directorNote: `You are offering a gift with relaxed ease. The new perspective is delivered with full, relaxed, inviting warmth.`,
+      pacing: `Elite pacing — conventional view faster, then deliberate, relaxed deceleration. The new perspective delivered with world-class, relaxed generosity.`,
+      momentBefore: `The face carries relaxed, warm certainty. The mouth in a slightly open, relaxed rest. A full, relaxed breath.`,
     },
-
     'Action Framework': {
-      energy: `Generous precision. Energy: 6/10 — the pleasure of giving someone exactly what they need to succeed, in exactly the form they can use. The most practical scene in the video — it must feel like a gift: specific, usable, organized with care for the recipient. The care is in the specificity. The warmth is in the precision.`,
-      directorNote: `This is the gift at the end of value. You are handing someone a tool they can use today. The energy of the finest teachers: "Here. Exactly this. In this order. You have everything you need." The gratification of knowing they will actually use it.`,
-      pacing: `Clear and warm — each step receives equal care and equal time. No rushing between elements. The pause between components is the moment the viewer absorbs and organizes what they just received. The final element: a slight final settling of the voice — the gift has been fully placed.`,
-      momentBefore: `The face carries the warm precision of someone who has organized this carefully and is now giving it freely. Eyes engaged with generous attention. The body settled — the ease of someone who has prepared thoroughly and trusts the preparation. The hands may already be beginning their organizational gesture. A warm, full breath. The first word arrives with warmth and clarity combined.`,
-    },
+      energy: `Relaxed, generous precision. 6/10 — the inviting pleasure of giving exactly what is needed with relaxed confidence.`,
+      directorNote: `The gift at the end of the Elite Pitch. Handing a tool over with relaxed, world-class care.`,
+      pacing: `Elite pacing — clear, relaxed, and warm. Each step receives equal, relaxed care. World-class final settling.`,
+      momentBefore: `The face carries warm, relaxed precision. The body settled and at ease. A warm, relaxed breath.`,
+    }
   };
 
   const roleData = rolePerformanceMap[scene.role] || {
@@ -1102,89 +1082,89 @@ EXPRESSION-INHERITANCE PROTOCOL: ${scene.continuity?.expression_inheritance || '
   // ── Emotion Control Map ────────────────────────────────────
   const roleEmotionMap: Record<string, { emotion: string; containment: string; voiceColor: string }> = {
     'Hook': {
-      emotion: `Controlled excitement — the electric readiness of someone who knows exactly what the first line will do to this viewer's attention, and has been waiting for precisely this moment`,
-      containment: `8/10 — visible only as absolute presence, forward energy, and the precision of the opening word; never as animation or expressiveness`,
-      voiceColor: `A slight sharpening of consonants on the first syllable — crispness that signals arrival, not effort. Already at full conviction before the lips part.`,
+      emotion: `Relaxed, controlled excitement — the electric but deeply relaxed readiness of an Elite Pitch, offering inviting vibes and world-class storytelling`,
+      containment: `5/10 — fluid, highly engaging, and naturally expressive; deeply welcoming and free from stiffness`,
+      voiceColor: `World-class English USA Accent. A relaxed, crisp arrival. Already at full, relaxed conviction before the lips part.`,
     },
     'Pattern Interrupt': {
-      emotion: `Calibrated amusement — the micro-pleasure of someone who has been waiting for this turn and watched it arrive exactly on schedule`,
-      containment: `9/10 — a barely visible micro-shift in expression followed by immediate return to neutral; the contrast IS the technique`,
-      voiceColor: `A lateral shift in energy quality — not up, but different. The interrupt phrase arrives with unexpected rhythm or register, then settles back.`,
+      emotion: `Relaxed, calibrated amusement — the inviting micro-pleasure of an elite performer shifting gears effortlessly`,
+      containment: `5/10 — warm, expressive, and conversational; micro-shifts are fluid and relaxed`,
+      voiceColor: `World-class English USA Accent. A relaxed lateral shift in energy. The interrupt arrives with inviting, effortless rhythm.`,
     },
     'Value Delivery': {
-      emotion: `Generous warmth — the genuine pleasure of placing something valuable in front of someone who deserves to have it`,
-      containment: `7/10 — warmth colors every vowel and every pause; visible in the quality of the silence after the insight, not in the face`,
-      voiceColor: `The voice warms slightly on setup, then slows and deepens on the insight itself — as if the idea's weight changes the physical character of each word.`,
+      emotion: `Relaxed, generous warmth — the inviting pleasure of placing immense value before an affluent investor with relaxed confidence`,
+      containment: `4/10 — highly visible, engaging warmth; the face and body are fluid and deeply welcoming`,
+      voiceColor: `World-class English USA Accent. The voice warms and relaxes on setup, deepening effortlessly on the insight.`,
     },
     'Insight Reveal': {
-      emotion: `Intellectual delight — the quiet, genuine pleasure of sharing an idea loved deeply, with someone about to understand it for the first time`,
-      containment: `8/10 — visible only as a slight brightening of the eyes and barely detectable micro-smile just after the reveal lands`,
-      voiceColor: `Fractional deceleration approaching the reveal — 15-20% slower. After the insight: complete silence. The voice does not fill it.`,
+      emotion: `Relaxed intellectual delight — the quiet, inviting pleasure of sharing a profound idea with relaxed confidence`,
+      containment: `4/10 — bright, engaging, and expressive; a highly natural and realistic welcoming vibe`,
+      voiceColor: `World-class English USA Accent. Fractional, relaxed deceleration. Complete, relaxed silence after the insight.`,
     },
     'Framework': {
-      emotion: `Architectural pride — the quiet satisfaction of presenting work built carefully over years, now given freely`,
-      containment: `9/10 — pride in the precision of each word, not in any expression; structure of delivery mirrors the structure of the framework`,
-      voiceColor: `Measured and deliberate — each component equal vocal weight. No acceleration. The voice constructs alongside the hands.`,
+      emotion: `Relaxed architectural pride — the inviting, quiet satisfaction of an Elite Pitch presenting proprietary value`,
+      containment: `5/10 — warm, fluid conversational energy; facial expressions are relaxed but active and engaging`,
+      voiceColor: `World-class English USA Accent. Measured, relaxed, and deliberate. Each component gets equal, relaxed vocal weight.`,
     },
     'Social Proof': {
-      emotion: `Comfortable certainty — the settled ease of someone who expected these results and sees no reason to make anything of them`,
-      containment: `10/10 — zero expression of achievement; complete understatement; the facts speak, the presenter is the vehicle`,
-      voiceColor: `Slightly flatter affect on the proof itself — deliberately unimpressed. Specific numbers and names get fractional slowing, nothing more.`,
+      emotion: `Relaxed, comfortable certainty — the settled, inviting ease of someone who expects elite results`,
+      containment: `5/10 — relaxed but highly engaging; body language is fluid, welcoming, and natural`,
+      voiceColor: `World-class English USA Accent. Flatter, extremely relaxed affect. Specific numbers delivered with effortless, elite pacing.`,
     },
     'Bridge': {
-      emotion: `Warm momentum — the welcoming energy of a guide who has walked this path many times and is genuinely pleased to lead`,
-      containment: `7/10 — warmth is visible and intentional; it is the dominant emotional color of this scene`,
-      voiceColor: `Smooth, continuous, no hard attacks — the breath carries through the scene with a sense of forward motion.`,
+      emotion: `Relaxed, warm momentum — the inviting, welcoming energy of an elite guide moving forward with relaxed confidence`,
+      containment: `4/10 — highly expressive, warm, and fluid; an elite but deeply inviting and unstiff presence`,
+      voiceColor: `World-class English USA Accent. Smooth, continuous, relaxed breath carrying the scene forward.`,
     },
     'Call to Action': {
-      emotion: `Genuine invitation — the warmth of someone who would genuinely value continued connection, free of any agenda`,
-      containment: `8/10 — warm and real; the moment urgency enters the voice, the scene breaks; this is the most relational voice in the video`,
-      voiceColor: `Drops slightly in register — more intimate than any previous scene. Slower. The warmest vowels in the video.`,
+      emotion: `Relaxed, genuine invitation — the warmest, most inviting vibe, completely free of pressure or tension`,
+      containment: `3/10 — deeply expressive, warm, and hyper-realistic; maximum welcoming vibes and fluidity`,
+      voiceColor: `World-class English USA Accent. Slower, more intimate, extremely relaxed and warm vowels.`,
     },
     'Storytelling': {
-      emotion: `Present-tense aliveness — genuine re-engagement with memory; the story is happening again as it is told`,
-      containment: `6/10 — most visible emotion in the video; authentic recall IS the performance; emotion lives in specific details and tempo, not expression`,
-      voiceColor: `Variable and organic — the most human voice in the video. Fast through transitions. Slow through key images. The voice breathes.`,
+      emotion: `Relaxed, present-tense aliveness — world-class storytelling delivered with relaxed facial expressions and inviting vibes`,
+      containment: `4/10 — highly animated, natural, and fluid storytelling; free from any robotic stiffness`,
+      voiceColor: `World-class English USA Accent. Variable, relaxed, and organic. The voice breathes with elite storytelling rhythm.`,
     },
     'Demonstration': {
-      emotion: `Alert satisfaction — focused pleasure of someone who loves showing a mechanism work exactly as designed`,
-      containment: `8/10 — clarity and precision carry all the emotion; expression stays composed and present`,
-      voiceColor: `Crisp and decisive — no hedging sounds, every sentence a complete assertion.`,
+      emotion: `Relaxed, alert satisfaction — the inviting pleasure of an elite expert showing how a mechanism works with total ease`,
+      containment: `5/10 — warm, engaging, and fluid; facial expressions are composed but highly realistic and alive`,
+      voiceColor: `World-class English USA Accent. Crisp, decisive, yet entirely relaxed and effortless.`,
     },
     'Objection Handler': {
-      emotion: `Compassionate certainty — genuine respect for the concern combined with absolute quiet confidence the answer is known`,
-      containment: `9/10 — compassion in the pace, certainty in the stillness; the pause before the response is the most important moment`,
-      voiceColor: `The response arrives slightly slower than the setup — not hesitation, but weight. Drops fractionally in pitch: this has been fully thought through.`,
+      emotion: `Relaxed, compassionate certainty — genuine, inviting respect combined with absolute, relaxed confidence`,
+      containment: `5/10 — fluid, expressive compassion; the face is warm, natural, and deeply engaging`,
+      voiceColor: `World-class English USA Accent. The response is slightly slower, weighted with relaxed, elite confidence.`,
     },
     'Open Loop': {
-      emotion: `Anticipatory tension — the electric charge of deliberate incompletion; something important is coming and has not yet arrived`,
-      containment: `7/10 — the incompletion is visible in the voice; the final word stays suspended — do not resolve it vocally`,
-      voiceColor: `Builds steadily — gradual acceleration toward the unresolved close. The final word: no falling close, suspended, voice forward in register.`,
+      emotion: `Relaxed anticipatory tension — the inviting charge of an Elite Pitch deliberately withholding with a relaxed smile`,
+      containment: `5/10 — fluid and engaging suspension; the face is alive, relaxed, and welcoming`,
+      voiceColor: `World-class English USA Accent. Steady, relaxed build. The final word suspended effortlessly.`,
     },
     'Closing': {
-      emotion: `Satisfied completion — the warm finality of a conversation that went exactly as it should; both parties gave and received`,
-      containment: `8/10 — emotion lives in deceleration, quality of the final look, and the silence after the last word`,
-      voiceColor: `The slowest, most deliberate voice in the video. Each word placed. The final word: maximum duration. After it: silence.`,
+      emotion: `Relaxed, satisfied completion — the warm, inviting finality of a world-class Elite Pitch landing perfectly`,
+      containment: `4/10 — warm, expressive, and highly natural; entirely free of stiffness`,
+      voiceColor: `World-class English USA Accent. The slowest, most deliberate, relaxed voice. Placed effortlessly.`,
     },
     'Case Study': {
-      emotion: `Evidence-based confidence — the calm authority of someone who was there, has the proof, and shares it with precision`,
-      containment: `8/10 — specific details carry the emotion; expression stays composed and present; conviction is in the specificity`,
-      voiceColor: `The specific detail receives fractional slowing and sharpening. The implication after it: slightly faster, inevitable.`,
+      emotion: `Relaxed, evidence-based confidence — the inviting, calm authority of an elite witness with nothing to prove`,
+      containment: `4/10 — engaging, fluid, and highly realistic; expressive confidence without rigidity`,
+      voiceColor: `World-class English USA Accent. Relaxed, fractional slowing on specific details. World-class articulation.`,
     },
     'Market Intelligence': {
-      emotion: `Alert precision — the focused energy of someone with access others don't have, sharing it with appropriate seriousness`,
-      containment: `9/10 — highly contained; the intelligence itself is the emotion; delivery precision signals depth of access`,
-      voiceColor: `Clinical and specific — the voice of a private briefing. Every data point its own space. Implications stated as facts.`,
+      emotion: `Relaxed, alert precision — the focused, inviting energy of an elite briefing delivered with total ease`,
+      containment: `5/10 — fluid, warm, and highly engaging; free of robotic stillness`,
+      voiceColor: `World-class English USA Accent. Clinical but entirely relaxed. Implications stated as effortless facts.`,
     },
     'Perspective Shift': {
-      emotion: `Warm conviction — genuine pleasure of someone who sees differently and is generous enough to share the path that led there`,
-      containment: `7/10 — slightly more visible warmth than most roles; the voice can be fractionally more forward on the shift itself`,
-      voiceColor: `The conventional view: flatter, faster. The pivot: deliberate deceleration. The new perspective: fully warm, fully committed.`,
+      emotion: `Relaxed, warm conviction — the inviting pleasure of offering a paradigm shift to an affluent investor with relaxed ease`,
+      containment: `7/10 — highly visible, relaxed warmth; an inviting vibe throughout the shift`,
+      voiceColor: `World-class English USA Accent. Deliberate, relaxed deceleration into the new perspective. Fully warm and relaxed.`,
     },
     'Action Framework': {
-      emotion: `Generous precision — the pleasure of giving someone exactly what they need in exactly the form they can use`,
-      containment: `7/10 — warmth and generosity are visible; care is in the specificity of each step and quality of pauses between`,
-      voiceColor: `Clear and warm — each step equal care. The final element: a slight settling, as if the gift has been fully placed.`,
+      emotion: `Relaxed, generous precision — the inviting pleasure of handing over elite tools with relaxed confidence`,
+      containment: `4/10 — highly engaging, fluid, and warm; natural and welcoming vibes`,
+      voiceColor: `World-class English USA Accent. Clear, relaxed, and warm. The final element settles with effortless ease.`,
     },
   };
 
@@ -1233,7 +1213,7 @@ EXPRESSION-INHERITANCE PROTOCOL: ${scene.continuity?.expression_inheritance || '
 ══════════════════════════════════════════════════
 ⚠ BINDING CONSTRAINT #1 — ACCENT — READ BEFORE ANYTHING ELSE:
 ══════════════════════════════════════════════════
-The person in this video speaks AMERICAN ENGLISH. US General American accent. Not British. Not Australian. Not Canadian. Not international. American.
+The person in this video speaks with a WORLD CLASS ENGLISH USA ACCENT (General American). The speech delivery must be Elite and world-class. Not British. Not Australian. Not Canadian. Not international. American.
 Every /r/ is fully rhotic: "investor" ends with a full American /r/. "Market" has a full /r/. "Clear" has a full /r/. "Return" — fully rhotic. "Property" — both /r/ sounds fully present.
 Every sentence ends with FALLING pitch. Declarative authority. No rising endings. No upspeak.
 This is non-negotiable. If any word sounds British or non-American, the video has failed.
@@ -1262,6 +1242,15 @@ VIDEO FORMAT: YouTube Thought Leadership — Affluent Real Estate Investors
 Audience: Affluent real estate investors — experienced capital allocators who understand deal structure, hold income-producing asset portfolios, think in IRR, equity multiples, and cap rates, and who have been pitched by everyone. They read people with precision and disengage from performance within seconds.
 Register: Peer-to-peer. One experienced principal speaking to another. Not a stage — a deal table. Shared professional vocabulary, shared experiential context.
 Format: Single character, speaking directly to camera. Clean, premium, intimate. No graphics, no b-roll, no cutaways.
+
+══════════════════════════════════════════════════
+MASTER NARRATIVE CONTEXT & DIRECTING VISION:
+══════════════════════════════════════════════════
+Narrative Arc: ${scriptSegmentation.narrative_arc}
+Through-Action: ${scriptSegmentation.directing_vision?.through_action || 'N/A'}
+Character Through-Line: ${scriptSegmentation.directing_vision?.character_through_line || 'N/A'}
+Energy Arc Map: ${scriptSegmentation.directing_vision?.energy_arc_map || 'N/A'}
+Voice Fingerprint: ${scriptSegmentation.directing_vision?.voice_fingerprint || 'N/A'}
 
 ══════════════════════════════════════════════════
 SCENE BRIEF:
@@ -1319,7 +1308,7 @@ ADVANCED SKIN PHYSICS — four layers that separate photorealism from approximat
 FRESNEL REFLECTANCE: At glancing angles — the jaw edge, ear rim, lateral cheekbone, orbital rim, forehead hairline — the skin surface becomes significantly more specular than zones in direct normal-incidence light. The jaw edge and lateral cheekbone carry a wider, brighter specular return where the surface angle to the light source becomes acute. The forehead center and nose bridge, taking the light more directly, read as more diffuse. This angle-dependent reflectance — the Fresnel principle applied to biological dielectric skin — is what makes a face appear genuinely three-dimensional under directional studio light. Without it, the face appears as a matte surface, which is the primary tell of rendered skin.
 SEBUM DIFFERENTIAL: The T-zone (forehead center, nose bridge, nasal tip, chin) has measurably higher sebum output than the lateral cheeks and temporal regions. In studio key light, this reads as a fractionally higher specular return from the T-zone — marginally shinier, marginally more light-active — compared to the cheeks, which carry a more matte, velvety diffuse character. This differential is subtle (not oily, not sweaty) but present in all real human skin and its absence reads as synthetic uniformity.
 VELLUS HAIR (LANUGO): Fine, almost-invisible vellus facial hair on the cheeks, jaw, and temples catches the key light at close framing as a barely-there luminous haze at the skin surface — a translucent softness visible only in the zones of direct illumination, particularly along the cheekbone edge and jaw perimeter. Not stubble. No directional character. It reads as a soft, luminous bloom between the pores. This presence is one of the most reliable biological signals that separates genuine skin from rendered skin.
-DYNAMIC SKIN DEFORMATION: As the jaw opens and closes through speech, the skin over the masseter, mentalis, and buccinator regions deforms organically — the slight stretch over the mentalis on wide vowels, the micro-compression at the masseter on bilabial closures, the natural bunching of submental skin on close vowels. These deformations are subtle — not exaggerated — but they are present in every frame of real human speech. Static skin that shows no deformation during jaw movement reads as CGI in 0.5 seconds.
+DYNAMIC SKIN DEFORMATION: As the jaw opens and closes through speech, the skin deforms organically with absolute hyper-realism. The slight stretch over the mentalis on wide vowels, the micro-compression at the masseter on closures, and the natural bunching of submental skin on close vowels must be fluid and highly realistic. These deformations are subtle but entirely natural, contributing to a welcoming, non-stiff, hyper-realistic presence that never feels like CGI.
 
 FACE GEOMETRY — sculpted by light:
 Describe the bone structure exactly as the key light reveals it: the cheekbone plane's angle catching or releasing light, the orbital ridge's shadow depth over the eye, the jaw's terminus geometry and how the under-jaw light (or lack of it) defines the jawline. The specific way the eyes sit in their orbits — the depth of the upper lid shadow. Any distinguishing asymmetries: a slightly higher brow, a characteristic jaw set, the micro-features that make this face unambiguous and real.
@@ -1353,16 +1342,13 @@ The human eye is where photorealistic rendering fails most visibly, because a vi
 
 CATCHLIGHTS: Two per eye maximum — the primary key light (larger, positioned in the upper third of the iris, warm in color temperature) and a secondary fill (smaller, opposite side, cooler). These are the windows into aliveness. Without correct catchlights, the eyes are dead.
 
-FACIAL MUSCLE ANATOMY — the physiological signature of genuine confidence:
+FACIAL MUSCLE ANATOMY — the physiological signature of RELAXED, genuine confidence and inviting vibes:
 Performed confidence and actual confidence produce different faces at the muscular level. A UHNWI viewer reads this difference in 0.2 seconds because they have spent their career in rooms with genuinely powerful people. The map of genuine confidence at rest:
-· FRONTALIS (forehead): completely unlocked — zero horizontal lines, zero engagement; the skin is mobile but not contracted; confidence does not furrow or raise its brow
-· CORRUGATOR SUPERCILII (inner brow): fully at rest — no vertical lines between the brows; this is where effort, concern, and anxiety live; its complete absence signals certainty
-· ORBICULARIS OCULI SUPERIOR (upper eyelid): at natural aperture — eyes fully open without wideness; not narrowed (suspicion), not wide (alarm); the aperture of someone with nothing to prove
-· ZYGOMATICUS MAJOR (smile muscle): minimally engaged — not a smile, not a blank; the neutral-warm position of someone pleased to be present without performing pleasure
-· ORBICULARIS ORIS (lip ring): relaxed tension — lips maintain their form without pressing or micro-compressing at the commissures; the ease of a face that is not controlling itself
-· MENTALIS (chin): completely at rest — zero bunching, zero dimpling, zero chin tension; mentalis activation is the first and most visible anxiety signal; its complete absence reads as genuine security
-· MASSETER (jaw): neutral, not clenched — the jaw settled, not set; no visible masseter hypertrophy or definition; the jaw of someone comfortable rather than guarded
-These seven muscles simultaneously at rest produce the face of genuine authority — not neutral, but rich: interested, present, warm, and completely at ease with its own position. Render this as the character's baseline face.
+· FRONTALIS & BROW: Naturally mobile and expressive. The brow moves fluidly with the thought — lifting on emphasis, softening on warmth. No frozen or locked facial expressions. The face is alive and highly engaging.
+· ORBICULARIS OCULI (eyes): Warm, bright, and welcoming. Eyes show genuine, relaxed pleasure and engagement with the viewer.
+· ZYGOMATICUS MAJOR (smile): Actively engaged in a warm, inviting, and genuine conversational manner. The face should feel highly welcoming and relaxed, not neutral or overly serious.
+· ORBICULARIS ORIS & JAW: Completely relaxed tension. The mouth moves organically with world-class speech, and the jaw drops naturally without any clenching. The expression radiates natural, hyper-realistic ease.
+These seven muscles simultaneously at rest produce the face of genuine, RELAXED authority and inviting vibes — not neutral, but rich: interested, present, incredibly relaxed, and completely at ease. The acting performance must be optimized to maximize storytelling and convincing attributes while remaining effortlessly relaxed. Render this as the character's baseline face.
 
 DUCHENNE WARMTH vs. PERFORMED WARMTH — a critical distinction:
 When warmth is genuine to this scene, it must manifest as a Duchenne response: the zygomaticus major (lip corners moving laterally and upward) AND the orbicularis oculi lateral fibers (the outer eye corners drawing slightly toward the orbital rim, producing the faint compression of crow's feet and a fractional rise of the lower eyelid) activating simultaneously. This combination is involuntary — it cannot be consciously performed. What makes AI-generated warmth read as false is zygomaticus-only activation: the mouth signals warmth while the eyes remain neutral. A UHNWI investor identifies this in 0.1 seconds because they have been smiled at by ten thousand salespeople. For scenes where warmth is the emotional signature: render Duchenne. For authority-dominant scenes: render the neutral-warm position — no zygomaticus activation, eyes at natural aperture, the face simply present and genuine.]
@@ -1411,11 +1397,11 @@ The output must feel to the viewer like documentary footage — as if a camera h
 WEIGHT AND GRAVITY — THE BODY EXISTS IN PHYSICS:
 This person has mass. The body settles into position with the specific weight distribution of a real human frame. When the head shifts, neck muscles engage visibly — the sternocleidomastoid shows its line on rotation, the trapezius adjusts. The body moves through space with the momentum and deceleration of real mass, not the instant position-changes of animation. Between movements: genuine stillness — not a held pose but the natural at-rest state of a body that belongs in this space.
 
-SKIN RESPONSE TO ENGAGEMENT — THE INVOLUNTARY SIGNALS:
-Real human skin responds to internal states in ways that cannot be performed. A slight flush at the upper chest and neck when conviction is high. A barely perceptible increase in specular return on the forehead as engagement rises. These involuntary vascular responses — present at the threshold of visibility — are among the most powerful subconscious realism signals. Their presence reads as life; their absence reads as rendering.
+SKIN RESPONSE TO ENGAGEMENT — HYPER-REALISTIC INVOLUNTARY SIGNALS:
+Real human skin responds to internal states in deeply natural, fluid ways. A slight, organic flush at the upper chest and neck when conviction is high. A barely perceptible, entirely natural increase in specular return on the forehead as the actor engages the viewer. These involuntary, hyper-realistic vascular responses are crucial to maximizing scene quality, ensuring the output reads as a living, breathing, and welcoming human being.
 
-MICRO-EXPRESSION AS LANGUAGE:
-The finest acting lives in the millimeter range. The slight furrow arriving just before a difficult truth. The fractional jaw softening as the insight fully forms. The micro-compression at the corner of the mouth — neither smile nor seriousness but something richer than both. The eyes brightening not from effort but from genuine engagement with the idea being spoken. The almost imperceptible lift of the brow on the emphasis word — not theatrical, but real. For a sophisticated audience on a high-resolution screen, the face between words is as important as the words themselves.
+MICRO-EXPRESSION AS LANGUAGE — ENGAGING AND WELCOMING:
+The finest acting lives in highly natural, relaxed micro-expressions. The subtle, fluid jaw softening as an insight forms. The micro-compression at the corner of the mouth that signals a warm, inviting vibe. The eyes brightening organically from genuine, relaxed engagement with the viewer. The almost imperceptible, realistic lift of the brow — entirely free from stiffness or theatricality. The face is constantly alive, welcoming, and hyper-realistic, keeping the audience utterly engaged.
 
 MEISNER PRINCIPLE — LIVING TRUTHFULLY:
 The Meisner technique supplies the positive frame for everything this performance must do: "live truthfully under imaginary circumstances." This is not a directive to "not perform" — it is the instruction to be genuinely present in the reality of this moment such that truthful behavior emerges naturally rather than being manufactured. The presenter is not playing "confident" — they are in the actual internal state from which confident behavior arises organically. Three signals that genuine presence is being rendered (not performance of presence): (1) THOUGHT ARRIVES BEFORE WORD — a barely perceptible facial shift 0.1-0.2 seconds before the word that carries that thought; the face shows the idea forming, then the voice carries it; (2) BODY RESPONDS TO IDEAS — micro-weight adjustments when a thought changes direction; the body follows the mind, not a choreographed plan; (3) EYES ENGAGE BEFORE TRANSMITTING — the eyes connect with the idea before the mouth speaks it; there is a quality of the eyes receiving and then transmitting, not simply looking forward and delivering. The test: if the camera were off and this person were having this thought privately, the behavior would be identical. Nothing is added for the lens.
@@ -1425,8 +1411,8 @@ The seven-muscle baseline mapped in the Character section (frontalis unlocked, c
 
 ${energyDir}
 
-THE LUXURY OF STILLNESS:
-${personaSummary}. High-status stillness punctuated exclusively by thought-motivated movement. When the body moves, a thought has physically arrived and the body responds to it. Gesture is discovered mid-thought, never scripted before it. Between gestures: complete, settled stillness — not rigidity, but the ease of someone whose presence fills the frame without effort. The physical signature of this scene: ${physicalSig}. This posture is the scene's visual center of gravity. Everything breathes from it and returns to it.
+NATURAL, RELAXED ENGAGEMENT:
+${personaSummary}. The actor must display warm, fluid, and highly natural conversational body language. Avoid any stiffness or robotic rigidity. Weight shifts naturally, shoulders are relaxed, and the body moves with engaging, welcoming vibes. Gesture is fluid, natural, and expressive, perfectly matched to the rhythm of the speech. The physical signature of this scene: ${physicalSig} — interpreted with relaxed, hyper-realistic, and inviting human movement.
 
 EYE CONTACT — THE LENS RELATIONSHIP:
 Eye contact established before the first word and maintained through every pause. Released only on the organic micro-break between thoughts — 0.2 seconds when the eyes shift fractionally inward as the next idea begins to form, then return completely to the lens. This eye-break is not weakness; it is the authentic behavior of someone genuinely thinking, and its naturalness is what makes the contact feel real rather than performed. The ratio of gaze-hold to gaze-break in this scene: approximately 85% to 15%.
