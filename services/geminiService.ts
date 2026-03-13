@@ -209,7 +209,7 @@ Categories to identify for UHNWI YouTube thought leadership:
 - ACTIVE LISTENING POSTURE: present, still, completely receptive
 - PRE-SPEECH MOMENT: the precise face and body state just before a significant statement begins
 
-For each frame: include mouth_state — what the mouth is doing at this exact moment (resting, mid-word, between phrases, beginning speech, ending speech).
+For each frame: include mouth_state — what the mouth is doing at this exact moment (resting, mid-word, between phrases, beginning speech, ending speech). EXTREMELY IMPORTANT: Only select the most suitable frames for elite scenes — faces must be clearly visible, eyes open and warmly engaged, with zero awkward motion blur. The mouth state must perfectly match the beginning or ending of a sentence to ensure hyper-realistic lip-syncing.
 
 Return complete JSON matching exactly this structure:
 {
@@ -566,7 +566,7 @@ QUALITY CHECK BEFORE RETURNING:
 ✓ moment_before includes jaw position, lip state, breath state, and psychological experience
 ✓ through_action is an active transitive verb targeting the viewer — not "to explain"
 ✓ lip_sync_blueprint.phonemic_anchors references specific words from that scene's script_text
-✓ All recommended_inframe and recommended_outframe timestamps exist in the provided frame library
+✓ All recommended_inframe and recommended_outframe timestamps exist in the provided frame library. They MUST perfectly match the required emotional posture, have clear and relaxed eye contact, and accurately match the pre-speech/post-speech mouth states for that specific scene.
 ✓ continuity.expression_inheritance describes a specific residual expression quality (not just energy level) from the previous scene
 ✓ continuity.retention_technique is one of the five named techniques with a brief rationale tied to this scene's position in the arc
 ✓ continuity.emotional_deposit names what the viewer receives and the specific mechanism through which they receive it
@@ -1481,7 +1481,7 @@ US GENERAL AMERICAN — PHONETICALLY PRECISE:
 Standard educated Midwestern neutral, fully rhotic. Every /r/ sounds completely at all positions — word-final ("investor" not "investo-"), pre-consonantal ("market" with full rhotic /r/), post-vocalic ("clear" not "clea"). Open, clear vowels without regional coloring — the cot-caught merger (no distinction between /ɑ/ and /ɔ/), pin-pen not merged, the pin vowel /ɪ/ not raised. Complete final consonants on every word — the /t/ in "market", the /d/ in "world", the /k/ in "risk" — each present, clean, and distinct. No glottal stops replacing final /t/ or /k/. No h-dropping. No vowel length distortion. Not broadcast news formal (too stiff for peer register). Not coastal casual (too relaxed for UHNWI credibility). The educated professional voice that earns authority in any room — warm, clear, completely at ease with itself.
 
 PROSODIC ARCHITECTURE — THE MUSIC OF AUTHORITY:
-English is stress-timed: stressed syllables arrive at roughly regular intervals while unstressed syllables compress between them. This rhythm is what makes English feel forward-moving and alive. For this scene (${scene.role}, energy ${scene.energy_level}/10): ${pacingDir}. The energy level translates acoustically as: ${scene.energy_level >= 7 ? 'crisp and forward — consonants have edge, vowels have full resonant width, pauses are brief and decisive' : scene.energy_level >= 5 ? 'deliberate warmth — stressed syllables receive full resonant duration, unstressed syllables compress naturally, pauses hold slightly longer than conversational baseline' : 'low register, intimate — stressed syllables move slowly with full duration, pauses are long enough to feel weighted'}.
+English is stress-timed: stressed syllables arrive at roughly regular intervals while unstressed syllables compress between them. This rhythm is what makes English feel forward-moving and alive. You must optimize the pacing of speech to perfection to create Elite Scenes. For this scene (${scene.role}, energy ${scene.energy_level}/10): ${pacingDir}. The energy level translates acoustically as: ${scene.energy_level >= 7 ? 'crisp and forward — consonants have edge, vowels have full resonant width, pauses are brief and decisive' : scene.energy_level >= 5 ? 'deliberate warmth — stressed syllables receive full resonant duration, unstressed syllables compress naturally, pauses hold slightly longer than conversational baseline' : 'low register, intimate — stressed syllables move slowly with full duration, pauses are long enough to feel weighted'}.
 
 EMOTIONAL VOICE COLOR FOR THIS SCENE:
 ${voiceColor}
@@ -1501,7 +1501,7 @@ ARTICULATION — EVERY WORD COMPLETE:
 Forward mouth placement — the voice sits at the front of the mouth, not buried in the throat. Word boundaries clean and distinct. Final consonants complete: the /t/ releases, the /k/ closes, the /f/ shapes its fricative channel. Vowels at their full resonant width on stressed syllables. Not over-articulated (that is pedantic and signals effort); precisely articulated (that is authority and signals certainty). The difference between natural and pedantic articulation is felt in the rhythm: natural articulation has the ease of fluency; pedantic articulation has the tension of effort. Generate the former.
 
 THE LUXURY OF PACE:
-This voice does not rush. Rushing is the acoustic signal of anxiety — and this voice has nowhere to be and everything to give. The pause between sentences is not empty; it is full of what was just said, still settling in the room. For an affluent real estate investor who has heard ten thousand pitches and underwritten hundreds of deals, the single clearest acoustic signal of genuine authority is the voice that slows when everyone else would accelerate. Speed signals desperation. Measured pace signals a person who knows the information is good enough to speak at its natural rate.
+This voice does not rush. Rushing is the acoustic signal of anxiety — and this voice has nowhere to be and everything to give. The pacing of speech must be optimized to absolute perfection, creating world-class Elite Scenes where every pause feels earned and natural, perfectly tuned for affluent real estate investors. The pause between sentences is not empty; it is full of what was just said, still settling in the room. For an affluent real estate investor who has heard ten thousand pitches and underwritten hundreds of deals, the single clearest acoustic signal of genuine authority is the voice that slows when everyone else would accelerate. Speed signals desperation. Measured pace signals a person who knows the information is good enough to speak at its natural rate.
 
 PROSODY MARKERS — used in the Script section below:
 — *word* = emphasis: fractionally more phonemic completeness, vowel at full resonant width, slight duration increase — not volume increase
